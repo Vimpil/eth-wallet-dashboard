@@ -19,9 +19,9 @@ export function TransactionHistory() {
       </CardHeader>
       <CardContent>
         <div className="text-center text-muted-foreground py-8">
-          <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Функция просмотра истории транзакций</p>
-          <p className="text-sm">будет добавлена в следующих версиях</p>
+          <History className="h-12 w-12 mx-auto mb-4 opacity-50" key="history-icon" />
+          <p key="history-text-1">Функция просмотра истории транзакций</p>
+          <p className="text-sm" key="history-text-2">будет добавлена в следующих версиях</p>
         </div>
       </CardContent>
     </Card>

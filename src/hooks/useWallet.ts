@@ -1,5 +1,6 @@
 import { useAccount, useBalance, useConnect, useDisconnect } from 'wagmi'
 import { formatEther } from 'viem'
+import type { Connector } from 'wagmi'
 
 /**
  * Кастомный хук для управления состоянием кошелька
@@ -32,7 +33,7 @@ export function useWallet() {
    * Подключение к кошельку через выбранный коннектор
    * @param connector - коннектор кошелька (MetaMask, WalletConnect и т.д.)
    */
-  const connectWallet = (connector: any) => {
+  const connectWallet = (connector: Connector) => {
     connect({ connector })
   }
 
