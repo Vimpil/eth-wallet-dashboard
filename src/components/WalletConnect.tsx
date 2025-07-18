@@ -12,28 +12,34 @@ export function WalletConnect() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader key="card-header">
-        <CardTitle className="flex items-center gap-2">
-          <Wallet className="h-6 w-6" key="wallet-icon" />
-          <span key="wallet-title">Connect Wallet</span>
+    <Card className="w-full max-w-md backdrop-blur-sm bg-background/95 shadow-lg">
+      <CardHeader className="space-y-4">
+        <CardTitle className="flex items-center gap-3">
+          <Wallet className="h-8 w-8 text-primary" />
+          <span className="text-2xl sm:text-3xl font-bold">Connect Wallet</span>
         </CardTitle>
-        <CardDescription key="card-description">
-          Choose a wallet to connect to the application
+        <CardDescription className="text-base">
+          Choose your preferred wallet to connect to the application
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4" key="card-content">
+      <CardContent>
+        <div className="grid gap-4">
           {connectors.map((connector: Connector) => (
             <Button
               key={connector.id}
               variant="outline"
-              className="w-full justify-start"
+              size="lg"
+              className="w-full justify-start text-left hover:bg-accent/50 transition-colors duration-200"
               onClick={() => connectWallet(connector)}
               disabled={isPending}
             >
-              {connector.name}
+              <div className="flex items-center gap-3">
+                {/* You can add wallet icons here if available */}
+                <span className="text-lg font-medium">{connector.name}</span>
+              </div>
             </Button>
           ))}
+        </div>
       </CardContent>
     </Card>
   )

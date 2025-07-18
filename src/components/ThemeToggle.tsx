@@ -30,7 +30,7 @@ export function ThemeToggle() {
       {theme === 'light' ? (
         <Moon className="h-4 w-4" />
       ) : (
-        <Sun className="h-4 w-4" />
+        <Sun className="h-4 w-4 text-white [&>path]:stroke-white [&>circle]:stroke-white" />
       )}
     </Button>
   )
