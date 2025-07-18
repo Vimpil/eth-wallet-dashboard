@@ -1,6 +1,29 @@
 # Ethereum Wallet Dashboard
 
-A simple React application for displaying Ethereum## Custom Hook useWallet
+A simple React application for displaying Ethereum## Custom Hook use## CThe `useWallet` hooThe `useWallet` hook provides a convenient interface for wallet interactions:
+
+```typescript MetaMask, WalletConnect, Injected
+
+### For WalletConnect
+Replace `projectId` in `src/config/wagmi.ts` with your actual Project ID from [WalletConnect Cloud](https://cloud.walletconnect.com/).
+
+## Production Build
+
+```bash
+bun run build
+```
+
+The built application will be in the `dist/` folder.
+
+## License
+
+MIT
+
+## Author
+
+Created using modern Web3 and React ecosystem technologies.t interface for wallet interactions:stom Hook useWallet
+
+The `useWallet` hook provides a convenient interface for wallet interactions:let
 
 The `useWallet` hook provides a convenient interface for working with the wallet:
 
@@ -51,51 +74,51 @@ git clone <repository-url>
 cd eth-wallet-app
 \`\`\`
 
-3. Установите зависимости:
+3. Install dependencies:
 \`\`\`bash
 bun install
 \`\`\`
 
-4. Запустите приложение в режиме разработки:
+4. Run the application in development mode:
 \`\`\`bash
 bunx vite
 \`\`\`
 
-5. Откройте [http://localhost:5173](http://localhost:5173) в браузере
+5. Open [http://localhost:5173](http://localhost:5173) in your browser
 
-## Структура проекта
+## Project Structure
 
 \`\`\`
 src/
 ├── components/
-│   ├── ui/          # Переиспользуемые UI компоненты (Shadcn)
-│   ├── WalletConnect.tsx    # Компонент для подключения кошелька
-│   └── WalletBalance.tsx    # Компонент для отображения баланса
+│   ├── ui/          # Reusable UI components (Shadcn)
+│   ├── WalletConnect.tsx    # Component for wallet connection
+│   └── WalletBalance.tsx    # Component for displaying balance
 ├── hooks/
-│   └── useWallet.ts         # Кастомный хук для работы с кошельком
+│   └── useWallet.ts         # Custom hook for wallet interactions
 ├── lib/
-│   └── utils.ts            # Утилитарные функции
+│   └── utils.ts            # Utility functions
 ├── config/
-│   └── wagmi.ts            # Конфигурация Wagmi
-├── App.tsx                 # Главный компонент приложения
-├── main.tsx               # Точка входа
-└── index.css              # Глобальные стили
+│   └── wagmi.ts            # Wagmi configuration
+├── App.tsx                 # Main application component
+├── main.tsx               # Entry point
+└── index.css              # Global styles
 \`\`\`
 
-## Использование
+## Usage
 
-### Подключение кошелька
-1. Откройте приложение в браузере
-2. Нажмите на кнопку с названием вашего кошелька (MetaMask, WalletConnect и т.д.)
-3. Подтвердите подключение в кошельке
+### Connecting a Wallet
+1. Open the application in your browser
+2. Click on the button with your wallet name (MetaMask, WalletConnect, etc.)
+3. Confirm the connection in your wallet
 
-### Просмотр баланса
-После подключения кошелька автоматически отобразится:
-- Адрес кошелька (сокращенный)
-- Текущий баланс ETH с точностью до 4 знаков после запятой
-- Кнопка для отключения кошелька
+### Viewing Balance
+After connecting your wallet, you will automatically see:
+- Wallet address (shortened)
+- Current ETH balance with 4 decimal places
+- Button to disconnect the wallet
 
-## Кастомный хук useWallet
+## Custom Hook useWallet
 
 Хук \`useWallet\` предоставляет удобный интерфейс для работы с кошельком:
 

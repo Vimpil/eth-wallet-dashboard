@@ -7,6 +7,11 @@ export default defineConfig({
   plugins: [react()],
   root: process.cwd(),
   base: '/',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  },
   server: {
     port: 3000,
     host: 'localhost',
@@ -24,10 +29,5 @@ export default defineConfig({
       protocol: 'ws',
       host: 'localhost'
     }
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
   },
 })

@@ -9,9 +9,7 @@ export const config = createConfig({
     [sepolia.id]: http()
   },
   connectors: [
-    metaMask({
-      shimDisconnect: true
-    })
+    metaMask()
   ]
 })
 

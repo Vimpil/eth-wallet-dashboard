@@ -15,11 +15,11 @@ export function useBalance(address: string | undefined) {
     isError: isEthPriceError 
   } = useEthPrice()
 
-  // Get balance from Wagmi
+  // Get balance from Wagmi with suspense enabled
   const { 
     data: wagmiBalance,
     isError: isBalanceError,
-    isLoading,
+    isLoading: isBalanceLoading,
     refetch
   } = useWagmiBalance({
     address: address as `0x${string}`
@@ -29,7 +29,7 @@ export function useBalance(address: string | undefined) {
     return {
       data: null,
       isError: isBalanceError || isEthPriceError,
-      isLoading,
+      isLoading: isBalanceLoading,
       refetch
     }
   }
@@ -43,7 +43,7 @@ export function useBalance(address: string | undefined) {
   return {
     data: balance,
     isError: isBalanceError || isEthPriceError,
-    isLoading,
+    isLoading: isBalanceLoading,
     refetch
   }
 }
