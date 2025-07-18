@@ -1,14 +1,17 @@
 import { createConfig, http } from 'wagmi'
-import { mainnet } from 'viem/chains'
+import { mainnet, sepolia } from 'viem/chains'
 import { metaMask } from 'wagmi/connectors'
 
 export const config = createConfig({
-  chains: [mainnet],
+  chains: [mainnet, sepolia],
   transports: {
-    [mainnet.id]: http()
+    [mainnet.id]: http(),
+    [sepolia.id]: http()
   },
   connectors: [
-    metaMask()
+    metaMask({
+      shimDisconnect: true
+    })
   ]
 })
 
