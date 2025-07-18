@@ -1,24 +1,42 @@
 # Ethereum Wallet Dashboard
 
-Простое React-приложение для отображения баланса Ethereum-кошелька, построенное с использованием современных технологий Web3.
+A simple React application for displaying Ethereum## Custom Hook useWallet
 
-## Технологии
+The `useWallet` hook provides a convenient interface for working with the wallet:
 
-- **React** - библиотека для создания пользовательских интерфейсов
-- **TypeScript** - типизированный JavaScript для лучшей разработки
-- **Wagmi** - библиотека для взаимодействия с Ethereum через Web3
-- **Viem** - низкоуровневая библиотека для работы с Ethereum
-- **Shadcn/UI** - красивые и доступные UI-компоненты
-- **Tailwind CSS** - utility-first CSS фреймворк для стилизации
-- **Bun** - быстрый JavaScript runtime и менеджер пакетов
-- **Vite** - современный инструмент сборки
+```typescript
+const {
+  address,           // Connected wallet address
+  isConnected,       // Connection status
+  balance,           // Formatted balance in ETH
+  isBalanceLoading,  // Balance loading status
+  isBalanceError,    // Balance loading error
+  connectors,        // Available connectors
+  isPending,         // Connection status
+  connectWallet,     // Connection function
+  disconnectWallet,  // Disconnection function
+} = useWallet()
+```
 
-## Возможности
+## Configurationilt using modern Web3 technologies.
 
-- ✅ Подключение кошелька (MetaMask, WalletConnect и другие)
-- ✅ Отображение адреса подключенного кошелька
-- ✅ Отображение баланса ETH с актуальными данными
-- ✅ Кастомный хук для управления состоянием кошелька
+## Technologies
+
+- **React** - library for building user interfaces
+- **TypeScript** - typed JavaScript for better development
+- **Wagmi** - library for interacting with Ethereum via Web3
+- **Viem** - low-level library for working with Ethereum
+- **Shadcn/UI** - beautiful and accessible UI components
+- **Tailwind CSS** - utility-first CSS framework for styling
+- **Bun** - fast JavaScript runtime and package manager
+- **Vite** - modern build tool
+
+## Features
+
+- ✅ Wallet connection (MetaMask, WalletConnect and others)
+- ✅ Display connected wallet address
+- ✅ Display ETH balance with real-time data
+- ✅ Custom hook for wallet state management
 - ✅ Современный и чистый интерфейс
 - ✅ Поддержка темной темы
 - ✅ Отзывчивый дизайн

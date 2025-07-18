@@ -18,7 +18,7 @@ function App() {
             Ethereum Wallet Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Простое приложение для управления кошельком Ethereum
+            Simple Ethereum Wallet Management Application
           </p>
         </div>
 

@@ -1,20 +1,24 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useWallet } from '@/hooks/useWallet'
-import { LogOut, Wallet } from 'lucide-react'
+import { useBalance } from '@/hooks/useBalance'
+import { useEthPrice } from '@/hooks/useEthPrice'
+import { LogOut, Wallet, RefreshCw } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { formatUsdValue } from '@/lib/format'
 
 export function WalletBalance() {
+  const { address, disconnectWallet } = useWallet()
   const { 
-    address, 
-    balance, 
-    isBalanceLoading, 
-    isBalanceError, 
-    disconnectWallet 
-  } = useWallet()
-
-  if (!address) {
-    return null
-  }
+    data: balance,
+    isLoading: isBalanceLoading,
+    isError: isBalanceError
+  } = useBalance(address)
+  const {
+    data: ethPrice,
+    isLoading: isPriceLoading,
+    isError: isPriceError
+  } = useEthPrice()
 
   return (
     <Card className="w-full max-w-md">
@@ -22,7 +26,7 @@ export function WalletBalance() {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wallet className="h-6 w-6" />
-            Баланс кошелька
+            Wallet Balance
           </div>
           <Button
             variant="outline"
@@ -31,22 +35,44 @@ export function WalletBalance() {
             className="flex items-center gap-2"
           >
             <LogOut className="h-4 w-4" />
-            Отключить
+            Disconnect
           </Button>
         </CardTitle>
         <CardDescription>
-          Адрес: {address.slice(0, 6)}...{address.slice(-4)}
+          Address: {address.slice(0, 6)}...{address.slice(-4)}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center">
           {isBalanceLoading ? (
-            <div className="text-muted-foreground">Загрузка...</div>
+            <div className="text-muted-foreground">Loading...</div>
           ) : isBalanceError ? (
-            <div className="text-destructive">Ошибка загрузки баланса</div>
+            <div className="text-destructive">Error loading balance</div>
           ) : (
-            <div className="text-2xl font-bold">
-              {parseFloat(balance).toFixed(4)} ETH
+            <div className="space-y-2">
+              <div className="text-2xl font-bold">
+                {balance ? parseFloat(balance.formatted).toFixed(4) : '0.0000'} ETH
+              </div>
+              {isPriceLoading ? (
+                <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                  <RefreshCw className="h-3 w-3 animate-spin" />
+                  Updating rate...
+                </div>
+              ) : isPriceError ? (
+                <div className="text-sm text-destructive">
+                  Error loading ETH rate
+                </div>
+              ) : ethPrice ? (
+                <div className="space-y-1">
+                  <div className="text-sm text-muted-foreground">
+                    ≈ {formatUsdValue(balance?.formatted || '0', ethPrice.price)} USD
+                  </div>
+                  <div className="text-xs text-muted-foreground/60 flex items-center justify-center gap-1">
+                    <RefreshCw className="h-3 w-3" />
+                    Rate updated {formatDistanceToNow(ethPrice.lastUpdate, { addSuffix: true })}
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
         </div>

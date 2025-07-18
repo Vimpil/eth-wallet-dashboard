@@ -16,10 +16,10 @@ export function WalletConnect() {
       <CardHeader key="card-header">
         <CardTitle className="flex items-center gap-2">
           <Wallet className="h-6 w-6" key="wallet-icon" />
-          <span key="wallet-title">Подключить кошелек</span>
+          <span key="wallet-title">Connect Wallet</span>
         </CardTitle>
         <CardDescription key="card-description">
-          Выберите кошелек для подключения к приложению
+          Choose a wallet to connect to the application
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4" key="card-content">

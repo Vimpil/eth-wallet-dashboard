@@ -3,32 +3,32 @@ import { formatEther } from 'viem'
 import type { Connector } from 'wagmi'
 
 /**
- * Кастомный хук для управления состоянием кошелька
+ * Custom hook for managing wallet state
  * 
- * Предоставляет удобный интерфейс для:
- * - Подключения и отключения кошелька
- * - Получения информации о подключенном аккаунте
- * - Получения и отображения баланса
- * - Управления состоянием загрузки и ошибок
+ * Provides convenient interface for:
+ * - Connecting and disconnecting wallet
+ * - Getting connected account information
+ * - Getting and displaying balance
+ * - Managing loading and error states
  */
 export function useWallet() {
-  // Получение информации о подключенном аккаунте
+  // Get connected account information
   const { address, isConnected } = useAccount()
   
-  // Хук для подключения к кошельку
+  // Hook for wallet connection
   const { connect, connectors, isPending } = useConnect()
   
-  // Хук для отключения от кошелька
+  // Hook for wallet disconnection
   const { disconnect } = useDisconnect()
   
-  // Получение баланса для подключенного адреса
+  // Get balance for connected address
   const { data: balance, isError, isLoading } = useBalance({
     address
   })
 
   /**
-   * Подключение к кошельку через выбранный коннектор
-   * @param connector - коннектор кошелька (MetaMask, WalletConnect и т.д.)
+   * Connect to wallet through selected connector
+   * @param connector - wallet connector (MetaMask, WalletConnect etc.)
    */
   const connectWallet = async (connector: Connector) => {
     try {
@@ -39,24 +39,24 @@ export function useWallet() {
   }
 
   /**
-   * Отключение от кошелька
+   * Disconnect from wallet
    */
   const disconnectWallet = () => {
     disconnect()
   }
 
-  // Форматирование баланса из Wei в ETH
+  // Format balance from Wei to ETH
   const formattedBalance = balance ? formatEther(balance.value) : '0'
 
   return {
-    address,              // Адрес подключенного кошелька
-    isConnected,          // Статус подключения
-    balance: formattedBalance,  // Отформатированный баланс в ETH
-    isBalanceLoading: isLoading,  // Статус загрузки баланса
-    isBalanceError: isError,      // Ошибка загрузки баланса
-    connectors,           // Доступные коннекторы кошельков
-    isPending,            // Статус процесса подключения
-    connectWallet,        // Функция подключения
-    disconnectWallet,     // Функция отключения
+    address,              // Connected wallet address
+    isConnected,          // Connection status
+    balance: formattedBalance,  // Formatted balance in ETH
+    isBalanceLoading: isLoading,  // Balance loading status
+    isBalanceError: isError,      // Balance loading error
+    connectors,           // Available wallet connectors
+    isPending,            // Connection process status
+    connectWallet,        // Connection function
+    disconnectWallet,     // Disconnection function
   }
 }
