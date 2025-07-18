@@ -1,34 +1,80 @@
+/**
+ * Base CSS variables and viewport fixes
+ */
 @layer base {
   :root {
-    --app-height: 100vh;
+    --viewport-height: 100vh;
+    --scrollbar-thumb: theme(colors.primary.DEFAULT / 0.2);
+    --scrollbar-thumb-hover: theme(colors.primary.DEFAULT / 0.3);
+    --glass-opacity: 0.95;
+    --glass-border: theme(colors.primary.DEFAULT / 0.1);
   }
-  
-  /* Fix for mobile viewport height */
+
+  /* iOS Safari viewport height fix */
   @supports (-webkit-touch-callout: none) {
     :root {
-      --app-height: -webkit-fill-available;
+      --viewport-height: -webkit-fill-available;
     }
   }
-}
 
-/* Custom scrollbar for modern browsers */
-@layer utilities {
-  .custom-scrollbar {
-    @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/30;
+  /* Dark mode adjustments */
+  :root[class~="dark"] {
+    --scrollbar-thumb: theme(colors.primary.DEFAULT / 0.3);
+    --scrollbar-thumb-hover: theme(colors.primary.DEFAULT / 0.4);
+    --glass-opacity: 0.8;
+    --glass-border: theme(colors.primary.DEFAULT / 0.2);
+  }
+
+  /* Root element full height */
+  #root {
+    min-height: var(--viewport-height);
+    width: 100%;
   }
 }
 
-/* Glass effect for cards */
-.glass-effect {
-  @apply backdrop-blur-sm bg-background/95;
-  box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.1) inset;
+/**
+ * Custom utilities
+ */
+@layer utilities {
+  /* Modern scrollbar styling */
+  .scrollbar-modern {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  
+  .scrollbar-modern::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-modern::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-modern::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+  
+  .scrollbar-modern::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    background: rgb(var(--background-rgb) / var(--glass-opacity));
+    backdrop-filter: blur(8px);
+    box-shadow: inset 0 0 0 1px var(--glass-border);
+  }
 }
 
-/* Animation for transaction items */
-@keyframes slideIn {
+/**
+ * Animations
+ */
+@keyframes slide-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(0.625rem);
   }
   to {
     opacity: 1;
@@ -36,11 +82,8 @@
   }
 }
 
-.animate-slide-in {
-  animation: slideIn 0.3s ease-out forwards;
-}
-
-/* Base layout styles */
-#root {
-  @apply min-h-[var(--app-height)] w-full;
+@layer utilities {
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out forwards;
+  }
 }
