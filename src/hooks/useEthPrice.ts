@@ -13,6 +13,7 @@ interface EthPrice {
 
 // Function to get ETH price directly from Etherscan API
 async function fetchEthPrice(): Promise<EtherscanPriceResult> {
+  // Always use mainnet for price data as it's more accurate
   const response = await fetch(
     `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${import.meta.env.VITE_ETHERSCAN_API_KEY}`
   )
@@ -28,6 +29,12 @@ async function fetchEthPrice(): Promise<EtherscanPriceResult> {
     throw new Error(data.message || 'Failed to fetch ETH price')
   }
 
+  // Validate the price data
+  const price = parseFloat(data.result.ethusd)
+  if (isNaN(price) || price <= 0) {
+    throw new Error('Invalid ETH price received')
+  }
+
   return data.result
 }
 
@@ -37,9 +44,16 @@ export function useEthPrice() {
     queryFn: async () => {
       try {
         const result = await fetchEthPrice()
+        const price = parseFloat(result.ethusd)
+        
+        // Additional validation
+        if (isNaN(price) || price <= 0) {
+          console.error('Invalid ETH price:', price)
+          return null
+        }
 
         return {
-          price: parseFloat(result.ethusd),
+          price: price,
           lastUpdate: new Date(parseInt(result.ethusd_timestamp) * 1000)
         }
       } catch (error) {

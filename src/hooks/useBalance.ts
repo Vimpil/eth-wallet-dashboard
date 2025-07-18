@@ -1,8 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { useChainId } from 'wagmi'
-import { formatEther } from 'viem'
-import { etherscanRequest } from '@/lib/etherscan'
+import { useBalance as useWagmiBalance } from 'wagmi'
 import { useEthPrice } from './useEthPrice'
+import { isAddress } from 'viem'
 
 interface Balance {
   formatted: string
@@ -11,32 +9,41 @@ interface Balance {
 }
 
 export function useBalance(address: string | undefined) {
-  const chainId = useChainId()
-  const { data: ethPrice } = useEthPrice()
+  // Get ETH price from Etherscan
+  const { 
+    data: ethPriceData,
+    isError: isEthPriceError 
+  } = useEthPrice()
 
-  return useQuery<Balance | null>({
-    queryKey: ['balance', address, chainId],
-    queryFn: async () => {
-      if (!address) return null
-
-      const balance = await etherscanRequest<string>(chainId, {
-        module: 'account',
-        action: 'balance',
-        address,
-        tag: 'latest'
-      })
-
-      const value = BigInt(balance)
-      const formatted = formatEther(value)
-      const ethValue = parseFloat(formatted)
-      
-      return {
-        formatted,
-        value,
-        usd: ethPrice * ethValue
-      }
-    },
-    enabled: Boolean(address),
-    refetchInterval: 10000 // Refresh every 10 seconds
+  // Get balance from Wagmi
+  const { 
+    data: wagmiBalance,
+    isError: isBalanceError,
+    isLoading,
+    refetch
+  } = useWagmiBalance({
+    address: address as `0x${string}`
   })
+
+  if (!wagmiBalance || !address || !isAddress(address)) {
+    return {
+      data: null,
+      isError: isBalanceError || isEthPriceError,
+      isLoading,
+      refetch
+    }
+  }
+
+  const balance: Balance = {
+    formatted: wagmiBalance.formatted,
+    value: wagmiBalance.value,
+    usd: ethPriceData && !isEthPriceError ? parseFloat(wagmiBalance.formatted) * ethPriceData.price : null
+  }
+
+  return {
+    data: balance,
+    isError: isBalanceError || isEthPriceError,
+    isLoading,
+    refetch
+  }
 }

@@ -37,15 +37,15 @@ const {
 - ✅ Display connected wallet address
 - ✅ Display ETH balance with real-time data
 - ✅ Custom hook for wallet state management
-- ✅ Современный и чистый интерфейс
-- ✅ Поддержка темной темы
-- ✅ Отзывчивый дизайн
+- ✅ Modern and clean interface
+- ✅ Dark theme support
+- ✅ Responsive design
 
-## Установка и запуск
+## Installation and Setup
 
-1. Убедитесь, что у вас установлен [Bun](https://bun.sh/)
+1. Make sure you have [Bun](https://bun.sh/) installed
 
-2. Клонируйте репозиторий:
+2. Clone the repository:
 \`\`\`bash
 git clone <repository-url>
 cd eth-wallet-app
@@ -101,23 +101,23 @@ src/
 
 \`\`\`typescript
 const {
-  address,           // Адрес подключенного кошелька
-  isConnected,       // Статус подключения
-  balance,           // Отформатированный баланс в ETH
-  isBalanceLoading,  // Статус загрузки баланса
-  isBalanceError,    // Ошибка загрузки баланса
-  connectors,        // Доступные коннекторы
-  isPending,         // Статус подключения
-  connectWallet,     // Функция подключения
-  disconnectWallet,  // Функция отключения
+  address,           // Connected wallet address
+  isConnected,       // Connection status
+  balance,           // Formatted ETH balance
+  isBalanceLoading,  // Balance loading status
+  isBalanceError,    // Balance loading error
+  connectors,        // Available connectors
+  isPending,         // Connection status
+  connectWallet,     // Connect function
+  disconnectWallet,  // Disconnect function
 } = useWallet()
 \`\`\`
 
-## Конфигурация
+## Configuration
 
 ### Wagmi Configuration
-Файл \`src/config/wagmi.ts\` содержит конфигурацию для подключения к Ethereum:
-- Поддерживаемые сети: Mainnet, Sepolia
+File \`src/config/wagmi.ts\` contains the Ethereum connection configuration:
+- Supported networks: Mainnet, Sepolia
 - Коннекторы: MetaMask, WalletConnect, Injected
 
 ### Для WalletConnect

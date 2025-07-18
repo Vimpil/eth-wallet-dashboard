@@ -39,7 +39,7 @@ export function WalletBalance() {
           </Button>
         </CardTitle>
         <CardDescription>
-          Address: {address.slice(0, 6)}...{address.slice(-4)}
+          Address: {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Not connected'}
         </CardDescription>
       </CardHeader>
       <CardContent>
