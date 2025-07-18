@@ -1,19 +1,15 @@
-import { createConfig, configureChains } from 'wagmi'
-import { mainnet } from 'wagmi/chains'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { publicProvider } from 'wagmi/providers/public'
-
-const { chains, publicClient } = configureChains(
-  [mainnet],
-  [publicProvider()]
-)
+import { createConfig, http } from 'wagmi'
+import { mainnet } from 'viem/chains'
+import { metaMask } from 'wagmi/connectors'
 
 export const config = createConfig({
-  autoConnect: true,
+  chains: [mainnet],
+  transports: {
+    [mainnet.id]: http()
+  },
   connectors: [
-    new MetaMaskConnector({ chains })
-  ],
-  publicClient
+    metaMask()
+  ]
 })
 
 declare module 'wagmi' {

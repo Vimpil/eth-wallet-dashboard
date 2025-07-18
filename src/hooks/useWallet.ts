@@ -23,18 +23,19 @@ export function useWallet() {
   
   // Получение баланса для подключенного адреса
   const { data: balance, isError, isLoading } = useBalance({
-    address: address,
-    query: {
-      enabled: !!address, // Запрос выполняется только если адрес существует
-    },
+    address
   })
 
   /**
    * Подключение к кошельку через выбранный коннектор
    * @param connector - коннектор кошелька (MetaMask, WalletConnect и т.д.)
    */
-  const connectWallet = (connector: Connector) => {
-    connect({ connector })
+  const connectWallet = async (connector: Connector) => {
+    try {
+      await connect({ connector })
+    } catch (error) {
+      console.error('Failed to connect:', error)
+    }
   }
 
   /**
