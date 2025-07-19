@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { useChainId } from 'wagmi'
 import { z } from 'zod'
+import { useNetwork } from './useNetwork'
 import { handleError, ValidationError } from '@/lib/errors'
 import { etherscanRequest } from '@/lib/etherscan'
 import { 
@@ -83,7 +83,7 @@ const requestParamsSchema = z.object({
 })
 
 export function useTransactions(address: string | undefined) {
-  const chainId = useChainId()
+  const { chainId } = useNetwork()
 
   return useQuery({
     queryKey: ['transactions', address, chainId],

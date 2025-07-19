@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useWallet } from '@/hooks/useWallet'
 import { useTransactions } from '@/hooks/useTransactions'
 import { History, Loader2, XCircle } from 'lucide-react'
-import { useChainId } from 'wagmi'
+import { useNetwork } from '@/hooks/useNetwork'
 import { useEthPrice } from '@/hooks/useEthPrice'
 import { FixedSizeList as List } from 'react-window'
 import { useMemo, useCallback } from 'react'
@@ -25,7 +25,7 @@ const isValidTransaction = (tx: unknown): tx is ProcessedTransaction => {
 
 export function TransactionHistory() {
   const { address } = useWallet()
-  const chainId = useChainId()
+  const { chainId } = useNetwork()
   const { data: transactions = [] as readonly ProcessedTransaction[], isLoading, isError, error } = useTransactions(address)
   const { data: ethPrice } = useEthPrice()
 
