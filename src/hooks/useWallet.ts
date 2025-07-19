@@ -21,9 +21,16 @@ export function useWallet() {
   // Hook for wallet disconnection
   const { disconnect } = useDisconnect()
   
-  // Get balance for connected address
+  // Get balance for connected address with auto-refresh
   const { data: balance, isError, isLoading } = useBalance({
-    address
+    address,
+    query: {
+      refetchInterval: 10000, // Refresh every 10 seconds
+      enabled: !!address,     // Only fetch when we have an address
+      refetchOnMount: true,   // Refresh when component mounts
+      refetchOnWindowFocus: true, // Refresh when window gets focus
+      refetchOnReconnect: true    // Refresh on network reconnection
+    }
   })
 
   /**
@@ -34,7 +41,8 @@ export function useWallet() {
     try {
       await connect({ connector })
     } catch (error) {
-      console.error('Failed to connect:', error)
+      console.error('Failed to connect wallet:', error)
+      throw new Error(error instanceof Error ? error.message : 'Failed to connect wallet')
     }
   }
 
@@ -45,8 +53,8 @@ export function useWallet() {
     disconnect()
   }
 
-  // Format balance from Wei to ETH
-  const formattedBalance = balance ? formatEther(balance.value) : '0'
+  // Format balance from Wei to ETH with safety checks
+  const formattedBalance = balance && balance.value ? formatEther(balance.value) : '0'
 
   return {
     address,              // Connected wallet address

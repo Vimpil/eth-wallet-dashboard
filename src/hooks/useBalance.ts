@@ -3,9 +3,9 @@ import { useEthPrice } from './useEthPrice'
 import { isAddress } from 'viem'
 
 interface Balance {
-  formatted: string
-  value: bigint
-  usd: number | null
+  formatted: string     // Formatted balance in ETH
+  value: bigint        // Raw balance in Wei
+  usd: number | null   // USD value, null if price data unavailable
 }
 
 export function useBalance(address: string | undefined) {
@@ -22,10 +22,26 @@ export function useBalance(address: string | undefined) {
     isLoading: isBalanceLoading,
     refetch
   } = useWagmiBalance({
-    address: address as `0x${string}`
+    address: address as `0x${string}`,
+    query: {
+      refetchInterval: 5000, // Refresh every 5 seconds
+      enabled: !!address && isAddress(address),
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true
+    }
   })
 
-  if (!wagmiBalance || !address || !isAddress(address)) {
+  if (!address || !isAddress(address)) {
+    return {
+      data: null,
+      isError: true,
+      isLoading: false,
+      refetch
+    }
+  }
+
+  if (!wagmiBalance && isBalanceLoading) {
     return {
       data: null,
       isError: isBalanceError || isEthPriceError,
@@ -34,10 +50,14 @@ export function useBalance(address: string | undefined) {
     }
   }
 
-  const balance: Balance = {
+  const balance: Balance = wagmiBalance ? {
     formatted: wagmiBalance.formatted,
     value: wagmiBalance.value,
     usd: ethPriceData && !isEthPriceError ? parseFloat(wagmiBalance.formatted) * ethPriceData.price : null
+  } : {
+    formatted: '0',
+    value: 0n,
+    usd: null
   }
 
   return {
