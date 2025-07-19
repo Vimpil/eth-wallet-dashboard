@@ -4,7 +4,7 @@ import { ArrowUp, ArrowDown, ExternalLink } from 'lucide-react'
 import { formatEther, formatGwei } from 'viem'
 import { formatAddress, getExplorerTxUrl } from '@/lib/etherscan'
 import { formatEthValue, formatUsdValue } from '@/lib/format'
-import type { Transaction } from '@/hooks/useTransactions'
+import type { ProcessedTransaction } from '@/lib/schemas'
 import { z } from 'zod'
 
 // Validation schema for props
@@ -27,7 +27,7 @@ const transactionItemSchema = z.object({
 })
 
 interface TransactionItemProps {
-  transaction: Transaction
+  transaction: ProcessedTransaction
   userAddress: string
   chainId: number
   ethPrice?: number

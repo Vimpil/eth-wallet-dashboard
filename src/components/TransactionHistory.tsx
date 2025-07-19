@@ -7,10 +7,10 @@ import { useEthPrice } from '@/hooks/useEthPrice'
 import { FixedSizeList as List } from 'react-window'
 import { useMemo, useCallback } from 'react'
 import { TransactionItem } from './TransactionItem'
-import type { Transaction } from '@/hooks/useTransactions'
+import type { ProcessedTransaction } from '@/lib/schemas'
 import type { ListChildComponentProps } from 'react-window'
 
-const isValidTransaction = (tx: unknown): tx is Transaction => {
+const isValidTransaction = (tx: unknown): tx is ProcessedTransaction => {
   return (
     tx !== null &&
     typeof tx === 'object' &&
@@ -26,7 +26,7 @@ const isValidTransaction = (tx: unknown): tx is Transaction => {
 export function TransactionHistory() {
   const { address } = useWallet()
   const chainId = useChainId()
-  const { data: transactions = [], isLoading, isError, error } = useTransactions(address)
+  const { data: transactions = [] as readonly ProcessedTransaction[], isLoading, isError, error } = useTransactions(address)
   const { data: ethPrice } = useEthPrice()
 
   // Convert error to string message
@@ -39,17 +39,18 @@ export function TransactionHistory() {
   }, [error])
 
   // Memoize list height to prevent recalculation on re-renders
-  const listHeight = useMemo(() => 
-    transactions.length ? Math.min(600, transactions.length * 150) : 150,
-    [transactions.length]
-  )
+  const listHeight = useMemo(() => {
+    const transactionCount = (transactions as readonly ProcessedTransaction[]).length
+    return transactionCount ? Math.min(600, transactionCount * 150) : 150
+  }, [transactions])
 
   // Validate transaction index and data before rendering
   const validateTransaction = useCallback((index: number): boolean => {
+    const txs = transactions as readonly ProcessedTransaction[]
     return (
       index >= 0 &&
-      index < transactions.length &&
-      isValidTransaction(transactions[index])
+      index < txs.length &&
+      isValidTransaction(txs[index])
     )
   }, [transactions])
 
@@ -58,10 +59,11 @@ export function TransactionHistory() {
     if (!validateTransaction(index)) {
       return null;
     }
+    const txs = transactions as readonly ProcessedTransaction[]
     return (
       <TransactionItem
-        key={transactions[index].hash}
-        transaction={transactions[index]}
+        key={txs[index].hash}
+        transaction={txs[index]}
         userAddress={address || ''}
         chainId={chainId}
         ethPrice={typeof ethPrice?.price === 'number' ? ethPrice.price : undefined}
@@ -108,7 +110,7 @@ export function TransactionHistory() {
             )}
             <p className="text-sm text-muted-foreground">Please try again later</p>
           </div>
-        ) : !transactions?.length ? (
+        ) : !(transactions as readonly ProcessedTransaction[]).length ? (
           <div className="flex flex-col items-center justify-center py-16 space-y-4">
             <div className="p-4 rounded-2xl bg-muted/50 ring-1 ring-border">
               <History className="h-12 w-12 text-muted-foreground" />
@@ -122,7 +124,7 @@ export function TransactionHistory() {
           <div>
             <List
               height={listHeight}
-              itemCount={transactions.length}
+              itemCount={(transactions as readonly ProcessedTransaction[]).length}
               itemSize={150}
               width="100%"
               className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/10 hover:scrollbar-thumb-primary/20"

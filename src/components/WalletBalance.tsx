@@ -7,7 +7,9 @@ import { LogOut, Wallet, RefreshCw, XCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { formatUsdValue } from '@/lib/format'
 
-export function WalletBalance() {
+import { memo } from 'react'
+
+export const WalletBalance = memo(function WalletBalance() {
   const { address, disconnectWallet } = useWallet()
   const { 
     data: balance,
@@ -98,4 +100,4 @@ export function WalletBalance() {
       </CardContent>
     </Card>
   )
-}
+})

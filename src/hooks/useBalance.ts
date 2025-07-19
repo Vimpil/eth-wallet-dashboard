@@ -24,11 +24,13 @@ export function useBalance(address: string | undefined) {
   } = useWagmiBalance({
     address: address as `0x${string}`,
     query: {
-      refetchInterval: 5000, // Refresh every 5 seconds
+      refetchInterval: 15000, // Refresh every 15 seconds
       enabled: !!address && isAddress(address),
       refetchOnMount: true,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true
+      refetchOnWindowFocus: 'always',
+      refetchOnReconnect: true,
+      // Add stale time to prevent unnecessary refetches
+      staleTime: 10000
     }
   })
 

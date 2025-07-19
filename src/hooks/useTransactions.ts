@@ -1,45 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 import { useChainId } from 'wagmi'
-import { mainnet, sepolia } from 'viem/chains'
 import { z } from 'zod'
 import { handleError, ValidationError } from '@/lib/errors'
 import { etherscanRequest } from '@/lib/etherscan'
 import { 
-  type EtherscanTransaction, 
   type ProcessedTransaction,
-  networkConfigSchema,
-  processedTransactionSchema,
-  type NetworkConfig
+  processedTransactionSchema
 } from '@/lib/schemas'
-
-// Network configurations
-const SUPPORTED_NETWORKS: Record<number, NetworkConfig> = {
-  [mainnet.id]: networkConfigSchema.parse({
-    apiUrl: 'https://api.etherscan.io',
-    explorerUrl: 'https://etherscan.io',
-    name: 'Ethereum Mainnet'
-  }),
-  [sepolia.id]: networkConfigSchema.parse({
-    apiUrl: 'https://api-sepolia.etherscan.io',
-    explorerUrl: 'https://sepolia.etherscan.io',
-    name: 'Sepolia Testnet'
-  })
-}
-
-// Function to check if network is supported
-const isSupportedNetwork = (chainId: number): boolean => {
-  return chainId in SUPPORTED_NETWORKS
-}
 
 /**
  * Transform and validate raw transaction data into processed transactions
  */
-const transformTransactions = (data: EtherscanTransaction[]): ProcessedTransaction[] => {
+const transformTransactions = (data: z.infer<typeof etherscanTransactionSchema>[]): ProcessedTransaction[] => {
   return data
     .map((tx) => {
       try {
-        // Transform the data
-        const transformed: ProcessedTransaction = {
+        // Transform the data, making methodId and functionName optional
+        const transformed = {
           hash: tx.hash,
           from: tx.from,
           to: tx.to,
@@ -49,8 +26,8 @@ const transformTransactions = (data: EtherscanTransaction[]): ProcessedTransacti
           isError: tx.isError,
           gasUsed: tx.gasUsed,
           gasPrice: tx.gasPrice,
-          methodId: tx.methodId,
-          functionName: tx.functionName
+          ...(tx.methodId && { methodId: tx.methodId }),
+          ...(tx.functionName && { functionName: tx.functionName })
         }
         
         // Validate the transformed data
@@ -69,31 +46,29 @@ const transformTransactions = (data: EtherscanTransaction[]): ProcessedTransacti
     .slice(0, 5)
 }
 
-// Schema for processed transactions after transformation
-const transactionSchema = z.object({
-  hash: z.string(),
-  from: z.string(),
-  to: z.string(),
-  value: z.string(),
-  timestamp: z.number(),
-  confirmations: z.string(),
-  isError: z.string(),
-  gasUsed: z.string(),
-  gasPrice: z.string()
-})
-
 // Validation schema for API response
 // Schema for raw Etherscan transaction data
 const etherscanTransactionSchema = z.object({
+  blockNumber: z.string(),
+  timeStamp: z.string(),
   hash: z.string(),
+  nonce: z.string(),
+  blockHash: z.string(),
+  transactionIndex: z.string(),
   from: z.string(),
   to: z.string(),
   value: z.string(),
-  timeStamp: z.string(),
-  confirmations: z.string(),
+  gas: z.string(),
+  gasPrice: z.string(),
   isError: z.string(),
+  txreceipt_status: z.string(),
+  input: z.string(),
+  contractAddress: z.string().nullable(),
+  cumulativeGasUsed: z.string(),
   gasUsed: z.string(),
-  gasPrice: z.string()
+  confirmations: z.string(),
+  methodId: z.string().optional(),
+  functionName: z.string().optional()
 })
 
 const requestParamsSchema = z.object({
@@ -114,7 +89,7 @@ export function useTransactions(address: string | undefined) {
     queryKey: ['transactions', address, chainId],
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
-    queryFn: async (): Promise<Transaction[]> => {
+    queryFn: async (): Promise<ProcessedTransaction[]> => {
       if (!address) return []
 
       try {
@@ -151,14 +126,16 @@ export function useTransactions(address: string | undefined) {
         const validatedTransactions = z.array(etherscanTransactionSchema)
           .parse(result)
         
-        // Log raw transactions for debugging
-        console.log('Raw transactions:', validatedTransactions)
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('[useTransactions] Raw transactions:', validatedTransactions)
+        }
         
         // Transform and validate the processed data
         const transformedTransactions = transformTransactions(validatedTransactions)
         
-        // Log transformed transactions
-        console.log('Transformed transactions:', transformedTransactions)
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('[useTransactions] Transformed transactions:', transformedTransactions)
+        }
         
         return transformedTransactions
       } catch (error) {
@@ -173,20 +150,17 @@ export function useTransactions(address: string | undefined) {
     },
     enabled: Boolean(address),
     refetchInterval: 30000,
-    retry: (failureCount, error) => {
+    retry: (failureCount, error: unknown) => {
       if (error instanceof ValidationError) {
-        console.error('Validation error:', error.message, error.cause)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[useTransactions] Validation error:', error.message, error.cause)
+        }
         return false
       }
-      console.error('Transaction fetch error:', error)
-      return failureCount < 3
-    },
-    onError: (error) => {
-      if (error instanceof ValidationError) {
-        console.error('Validation error:', error.message, error.cause)
-      } else {
-        console.error('Transaction fetch error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[useTransactions] Transaction fetch error:', error)
       }
+      return failureCount < 3
     }
   })
 }
