@@ -7,17 +7,17 @@ export class ApiError extends Error {
   }
 }
 
-export class NetworkError extends ApiError {
+export class ApiNetworkError extends ApiError {
   constructor(chainId: number) {
     super(`Network with ID ${chainId} is not supported`)
-    this.name = 'NetworkError'
+    this.name = 'ApiNetworkError'
   }
 }
 
-export class RateLimitError extends ApiError {
+export class ApiRateLimitError extends ApiError {
   constructor(waitTime: number) {
     super(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds.`)
-    this.name = 'RateLimitError'
+    this.name = 'ApiRateLimitError'
   }
 }
 

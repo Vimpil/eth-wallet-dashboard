@@ -2,7 +2,7 @@ import { NETWORK_CONFIG, isSupportedNetwork } from '@/config/networks'
 import type { SupportedChainId } from '@/config/networks'
 import { RateLimiter } from './RateLimiter'
 import type { ApiResponse } from './ApiTypes'
-import { NetworkError, ConfigError, HttpError, RateLimitError } from './ApiTypes'
+import { ApiNetworkError, ConfigError, HttpError, ApiRateLimitError } from './ApiTypes'
 import { BlockExplorerService } from './BlockExplorerService'
 
 interface EtherscanServiceConfig {
@@ -21,12 +21,12 @@ export class EtherscanService {
 
   async request<T>(chainId: number, params: Record<string, string>): Promise<T> {
     if (!isSupportedNetwork(chainId)) {
-      throw new NetworkError(chainId)
+      throw new ApiNetworkError(chainId)
     }
 
     const limitError = this.rateLimiter.check()
     if (limitError) {
-      throw new RateLimitError(limitError.waitTime)
+      throw new ApiRateLimitError(limitError.waitTime)
     }
 
     const config = NETWORK_CONFIG[chainId as SupportedChainId]
