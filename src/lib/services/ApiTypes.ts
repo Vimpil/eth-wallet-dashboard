@@ -1,4 +1,3 @@
-import type { SupportedChainId } from '@/config/networks'
 
 export class ApiError extends Error {
   constructor(message: string) {
