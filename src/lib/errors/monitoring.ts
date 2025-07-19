@@ -33,7 +33,7 @@ export class ErrorMonitor {
       console.error('Error Report:', report);
     }
 
-    // Here you could send to error monitoring service like Sentry
+    // Here you could send to error monitoring service
     // await this.sendToErrorService(report);
   }
 
