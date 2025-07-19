@@ -12,13 +12,13 @@ const transactionItemSchema = z.object({
   transaction: z.object({
     from: z.string().startsWith('0x'),
     to: z.string().startsWith('0x'),
-    value: z.bigint(),
+    value: z.string(),
     timestamp: z.number().min(0),
     hash: z.string().startsWith('0x'),
-    confirmations: z.number().min(0),
-    isError: z.boolean(),
-    gasUsed: z.bigint(),
-    gasPrice: z.bigint()
+    confirmations: z.string(),
+    isError: z.string(),
+    gasUsed: z.string(),
+    gasPrice: z.string()
   }),
   userAddress: z.string().startsWith('0x'),
   chainId: z.number().positive(),
@@ -45,7 +45,7 @@ export const TransactionItem = memo(function TransactionItem(props: TransactionI
 
   const { transaction: tx, userAddress, chainId, ethPrice, style } = props;
   const isSent = tx.from.toLowerCase() === userAddress.toLowerCase()
-  const value = formatEther(tx.value)
+  const value = Number(formatEther(BigInt(tx.value)))
 
   return (
     <div
@@ -76,10 +76,10 @@ export const TransactionItem = memo(function TransactionItem(props: TransactionI
             </span>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            Gas: {formatGwei(tx.gasPrice)} Gwei × {tx.gasUsed.toString()} units
+            Gas: {formatGwei(BigInt(tx.gasPrice))} Gwei × {BigInt(tx.gasUsed).toString()} units
           </div>
           <div className="text-xs text-muted-foreground">
-            Confirmations: {tx.confirmations}
+            Confirmations: {Number(tx.confirmations)}
           </div>
         </div>
       </div>

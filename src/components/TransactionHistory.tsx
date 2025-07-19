@@ -26,8 +26,17 @@ const isValidTransaction = (tx: unknown): tx is Transaction => {
 export function TransactionHistory() {
   const { address } = useWallet()
   const chainId = useChainId()
-  const { data: transactions = [], isLoading, isError } = useTransactions(address)
+  const { data: transactions = [], isLoading, isError, error } = useTransactions(address)
   const { data: ethPrice } = useEthPrice()
+
+  // Convert error to string message
+  const errorMessage = useMemo(() => {
+    if (!error) return ''
+    if (error instanceof Error) {
+      return error.message
+    }
+    return String(error)
+  }, [error])
 
   // Memoize list height to prevent recalculation on re-renders
   const listHeight = useMemo(() => 
@@ -94,6 +103,9 @@ export function TransactionHistory() {
               <XCircle className="h-8 w-8 text-destructive" />
             </div>
             <p className="font-medium text-destructive">Error loading transactions</p>
+            {errorMessage && (
+              <p className="text-sm text-destructive/80 text-center max-w-md">{errorMessage}</p>
+            )}
             <p className="text-sm text-muted-foreground">Please try again later</p>
           </div>
         ) : !transactions?.length ? (
