@@ -9,8 +9,10 @@ export class ErrorMonitor {
   private static instance: ErrorMonitor;
 
   private constructor() {
-    window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
-    window.addEventListener('error', this.handleError);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
+      window.addEventListener('error', this.handleError);
+    }
   }
 
   static getInstance(): ErrorMonitor {
