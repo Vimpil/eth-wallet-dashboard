@@ -83,7 +83,8 @@ const requestParamsSchema = z.object({
 })
 
 export function useTransactions(address: string | undefined) {
-  const { chainId } = useNetwork()
+  const networkResult = useNetwork()
+  const chainId = networkResult.success === true && 'value' in networkResult ? networkResult.value.chainId : undefined
 
   return useQuery({
     queryKey: ['transactions', address, chainId],
@@ -91,6 +92,8 @@ export function useTransactions(address: string | undefined) {
     gcTime: 5 * 60 * 1000,
     queryFn: async (): Promise<ProcessedTransaction[]> => {
       if (!address) return []
+
+      if (typeof chainId !== 'number') return []
 
       try {
         // Validate request parameters

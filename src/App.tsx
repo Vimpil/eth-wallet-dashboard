@@ -6,6 +6,11 @@ import { Loading } from '@/components/ui/loading'
 import { PageLoader } from '@/components/ui/page-loader'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { NetworkStatus } from '@/components/NetworkStatus'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { ErrorMonitor } from '@/lib/errors/monitoring'
+
+// Initialize error monitoring
+ErrorMonitor.getInstance();
 
 // Lazy loaded components
 const WalletConnect = lazy(() => 
@@ -90,14 +95,16 @@ function App() {
               </motion.header>
 
               {/* Network Status */}
-              <motion.div 
-                className="flex justify-center"
-                initial={{ opacity: 0, y: 20 }}
+              <ErrorBoundary>
+                <motion.div 
+                  className="flex justify-center"
+                  initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
                 <NetworkStatus />
               </motion.div>
+              </ErrorBoundary>
 
               {/* Main Content Area */}
               <motion.div 
@@ -114,28 +121,32 @@ function App() {
                     transition={{ delay: 0.6 }}
                   >
                     {/* Wallet Balance Card */}
-                    <motion.div 
-                      className="mx-auto w-full max-w-md"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.7 }}
-                    >
-                      <Suspense fallback={<Loading />}>
-                        <WalletBalance />
-                      </Suspense>
-                    </motion.div>
+                    <ErrorBoundary>
+                      <motion.div 
+                        className="mx-auto w-full max-w-md"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 }}
+                      >
+                        <Suspense fallback={<Loading />}>
+                          <WalletBalance />
+                        </Suspense>
+                      </motion.div>
+                    </ErrorBoundary>
                     
                     {/* Transaction History Card */}
-                    <motion.div 
-                      className="mx-auto w-full max-w-2xl"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.8 }}
-                    >
-                      <Suspense fallback={<Loading />}>
-                        <TransactionHistory />
-                      </Suspense>
-                    </motion.div>
+                    <ErrorBoundary>
+                      <motion.div 
+                        className="mx-auto w-full max-w-2xl"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 }}
+                      >
+                        <Suspense fallback={<Loading />}>
+                          <TransactionHistory />
+                        </Suspense>
+                      </motion.div>
+                    </ErrorBoundary>
                   </motion.div>
                 ) : (
                   <motion.div 
@@ -144,9 +155,11 @@ function App() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.6 }}
                   >
-                    <Suspense fallback={<Loading />}>
-                      <WalletConnect />
-                    </Suspense>
+                    <ErrorBoundary>
+                      <Suspense fallback={<Loading />}>
+                        <WalletConnect />
+                      </Suspense>
+                    </ErrorBoundary>
                   </motion.div>
                 )}
               </motion.div>

@@ -25,7 +25,8 @@ const isValidTransaction = (tx: unknown): tx is ProcessedTransaction => {
 
 export function TransactionHistory() {
   const { address } = useWallet()
-  const { chainId } = useNetwork()
+  const networkResult = useNetwork()
+  const chainId = networkResult.success === true && 'value' in networkResult ? networkResult.value.chainId : undefined
   const { data: transactions = [] as readonly ProcessedTransaction[], isLoading, isError, error } = useTransactions(address)
   const { data: ethPrice } = useEthPrice()
 
@@ -56,7 +57,7 @@ export function TransactionHistory() {
 
   // Memoize row renderer to prevent function recreation on re-renders
   const renderRow = useCallback(({ index, style }: ListChildComponentProps) => {
-    if (!validateTransaction(index)) {
+    if (!validateTransaction(index) || typeof chainId !== 'number') {
       return null;
     }
     const txs = transactions as readonly ProcessedTransaction[]
