@@ -19,7 +19,7 @@ ETH Wallet Dashboard is a modern application for managing your Ethereum wallet, 
 ## Features
 - Connect your Ethereum wallet
 - View wallet balance and ETH price
-- Display transaction history (latest 5 transactions)
+- Display transaction history (latest 5+ transactions)
 - Network status indicator
 - Light/dark theme toggle
 - Error boundaries and robust validation
