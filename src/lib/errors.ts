@@ -1,68 +1,11 @@
 import { z } from 'zod'
-
-/**
- * Base class for application-specific errors
- */
-export class AppError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public cause?: Error
-  ) {
-    super(message)
-    this.name = this.constructor.name
-    Error.captureStackTrace(this, this.constructor)
-  }
-}
-
-/**
- * Error class for validation failures
- */
-export class ValidationError extends AppError {
-  constructor(
-    message: string,
-    public cause?: z.ZodError | Error
-  ) {
-    super(message, 'VALIDATION_ERROR', cause)
-  }
-}
-
-/**
- * Error class for network-related issues
- */
-export class NetworkError extends AppError {
-  constructor(
-    message: string,
-    public cause?: Error
-  ) {
-    super(message, 'NETWORK_ERROR', cause)
-  }
-}
-
-/**
- * Error class for wallet-related issues
- */
-export class WalletError extends AppError {
-  constructor(
-    message: string,
-    public cause?: Error
-  ) {
-    super(message, 'WALLET_ERROR', cause)
-  }
-}
-
-/**
- * Error class for Ethereum RPC issues
- */
-export class EthereumRpcError extends AppError {
-  constructor(
-    message: string,
-    public errorCode?: number,
-    public cause?: Error
-  ) {
-    super(message, 'ETHEREUM_RPC_ERROR', cause)
-  }
-}
+import {
+  AppError,
+  ValidationError,
+  NetworkError,
+  WalletError,
+  EthereumRpcError
+} from './errors/AppError'
 
 /**
  * Generic error handler that formats different types of errors

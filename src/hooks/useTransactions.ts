@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { useNetwork } from './useNetwork'
-import { handleError, ValidationError } from '@/lib/errors'
+import { handleError } from '@/lib/errors'
+import { ValidationError } from '@/lib/errors/AppError'
 import { etherscanRequest } from '@/lib/etherscan'
 import { 
   type ProcessedTransaction,

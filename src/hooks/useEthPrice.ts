@@ -13,7 +13,8 @@ interface EthPrice {
 
 import { z } from 'zod'
 import { etherscanRequest } from '@/lib/etherscan'
-import { handleError, ValidationError } from '@/lib/errors'
+import { handleError } from '@/lib/errors'
+import { ValidationError } from '@/lib/errors/AppError'
 import { mainnet } from 'viem/chains'
 
 // Validation schema for price data
