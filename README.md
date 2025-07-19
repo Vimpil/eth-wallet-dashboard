@@ -81,7 +81,7 @@ Or use Vite directly:
 ```powershell
 bunx vite preview
 ```
-The app will be available at [http://localhost:5173](http://localhost:5173) by default.
+The app will be available at [http://localhost:3000](http://localhost:3000) by default.
 
 ### Build for Production
 ```powershell
