@@ -57,11 +57,11 @@
     </div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Удалить ранний загрузчик после монтирования React
+      // Remove early loader after React mounts
       window.addEventListener('load', () => {
         const earlyLoader = document.getElementById('early-loader');
         if (earlyLoader) {
-          // Даем React немного времени для рендера
+          // Give React some time to render
           setTimeout(() => {
             earlyLoader.style.opacity = '0';
             earlyLoader.style.transition = 'opacity 0.3s';

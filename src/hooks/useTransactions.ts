@@ -48,11 +48,31 @@ const isSupportedNetwork = (chainId: number): chainId is keyof typeof NETWORK_CO
   return chainId in NETWORK_CONFIG
 }
 
+// Cache the data transformation function for better performance
+const transformTransactions = (data: EtherscanTransaction[]): Transaction[] => {
+  return data
+    .map((tx: EtherscanTransaction): Transaction => ({
+      hash: tx.hash as Hash,
+      from: tx.from as Address,
+      to: tx.to as Address,
+      value: BigInt(tx.value),
+      timestamp: Number(tx.timeStamp) * 1000,
+      confirmations: Number(tx.confirmations),
+      isError: tx.isError === '1',
+      gasUsed: BigInt(tx.gasUsed),
+      gasPrice: BigInt(tx.gasPrice)
+    }))
+    .filter((tx: Transaction) => !tx.isError)
+    .slice(0, 5)
+}
+
 export function useTransactions(address: string | undefined) {
   const chainId = useChainId()
 
   return useQuery({
     queryKey: ['transactions', address, chainId],
+    staleTime: 30 * 1000, // Consider data fresh for 30 seconds
+    gcTime: 5 * 60 * 1000, // Cache data for 5 minutes before garbage collection
     queryFn: async (): Promise<Transaction[]> => {
       if (!address) return []
       
@@ -102,21 +122,8 @@ export function useTransactions(address: string | undefined) {
           throw new Error('Invalid response format from Etherscan API')
         }
 
-        // Transform API data into our format
-        return data.result
-          .map((tx: EtherscanTransaction): Transaction => ({
-            hash: tx.hash as Hash,
-            from: tx.from as Address,
-            to: tx.to as Address,
-            value: BigInt(tx.value),
-            timestamp: Number(tx.timeStamp) * 1000,
-            confirmations: Number(tx.confirmations),
-            isError: tx.isError === '1',
-            gasUsed: BigInt(tx.gasUsed),
-            gasPrice: BigInt(tx.gasPrice)
-          }))
-          .filter((tx: Transaction) => !tx.isError)
-          .slice(0, 5)
+        // Use the extracted transformation function
+        return transformTransactions(data.result)
 
       } catch (error) {
         console.error('Error fetching transactions:', error)

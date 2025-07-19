@@ -2,7 +2,7 @@ import { Suspense, lazy } from 'react'
 import { useWallet } from '@/hooks/useWallet'
 import type { Connector } from 'wagmi'
 
-// Динамический импорт компонентов
+// Dynamic component imports
 const WalletCard = lazy(() => import('@/components/ui/wallet/WalletCard').then(module => ({
   default: module.WalletCard
 })))
@@ -10,7 +10,7 @@ const WalletButton = lazy(() => import('@/components/ui/wallet/WalletButton').th
   default: module.WalletButton
 })))
 
-// Fallback компонент для загрузки
+// Loading fallback component
 function LoadingFallback() {
   return <div className="w-full max-w-md h-64 animate-pulse bg-background/50 rounded-lg" />
 }
