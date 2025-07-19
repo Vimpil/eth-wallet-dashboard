@@ -17,6 +17,29 @@ class EtherscanError extends Error {
   }
 }
 
+// Rate limiting configuration
+const RATE_LIMIT = {
+  maxRequests: 5, // Maximum requests per second as per Etherscan docs
+  windowMs: 1000, // 1 second window
+  requests: [] as number[] // Timestamps of requests
+}
+
+function checkRateLimit() {
+  const now = Date.now()
+  // Remove requests outside the current window
+  RATE_LIMIT.requests = RATE_LIMIT.requests.filter(
+    time => now - time < RATE_LIMIT.windowMs
+  )
+  
+  if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequests) {
+    const oldestRequest = RATE_LIMIT.requests[0]
+    const waitTime = RATE_LIMIT.windowMs - (now - oldestRequest)
+    throw new EtherscanError(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds.`)
+  }
+  
+  RATE_LIMIT.requests.push(now)
+}
+
 export async function etherscanRequest<T>(
   chainId: number,
   params: Record<string, string>
@@ -24,6 +47,8 @@ export async function etherscanRequest<T>(
   if (!isSupportedNetwork(chainId)) {
     throw new Error(`Network with ID ${chainId} is not supported`)
   }
+
+  checkRateLimit()
 
   const config = NETWORK_CONFIG[chainId as SupportedChainId]
   const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY

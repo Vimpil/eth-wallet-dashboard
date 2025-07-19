@@ -64,11 +64,19 @@ export function useEthPrice() {
     staleTime: 60 * 1000,      // Consider data fresh for 1 minute
     gcTime: 60 * 60 * 1000,    // Keep unused data in cache for 1 hour
     retry: (failureCount, error) => {
-      // Only retry on network errors, not validation errors
+      // Only retry on network errors and rate limit errors, not validation errors
       if (error instanceof ValidationError) {
         return false
       }
+      
+      // Add exponential backoff for rate limit errors
+      if (error instanceof Error && error.message.includes('Rate limit exceeded')) {
+        // Will retry with exponential backoff
+        return failureCount < 5
+      }
+      
       return failureCount < 3
-    }
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000) // Exponential backoff with max 30s delay
   })
 }
