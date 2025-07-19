@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useWallet } from '@/hooks/useWallet'
+import { useWalletSession } from '@/hooks/useWalletSession'
 import { Loading } from '@/components/ui/loading'
 import { PageLoader } from '@/components/ui/page-loader'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -20,6 +21,12 @@ const TransactionHistory = lazy(() =>
 function App() {
   const { isConnected } = useWallet()
   const [isLoading, setIsLoading] = useState(true)
+  
+  // Initialize wallet session management
+  useWalletSession({
+    timeout: 30, // disconnect after 30 minutes of inactivity
+    resetOnActivity: true
+  })
 
   useEffect(() => {
     // Check if loading is really needed
