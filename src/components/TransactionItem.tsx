@@ -5,6 +5,26 @@ import { formatEther, formatGwei } from 'viem'
 import { formatAddress, getExplorerTxUrl } from '@/lib/etherscan'
 import { formatEthValue, formatUsdValue } from '@/lib/format'
 import type { Transaction } from '@/hooks/useTransactions'
+import { z } from 'zod'
+
+// Validation schema for props
+const transactionItemSchema = z.object({
+  transaction: z.object({
+    from: z.string().startsWith('0x'),
+    to: z.string().startsWith('0x'),
+    value: z.bigint(),
+    timestamp: z.number().min(0),
+    hash: z.string().startsWith('0x'),
+    confirmations: z.number().min(0),
+    isError: z.boolean(),
+    gasUsed: z.bigint(),
+    gasPrice: z.bigint()
+  }),
+  userAddress: z.string().startsWith('0x'),
+  chainId: z.number().positive(),
+  ethPrice: z.number().positive().optional(),
+  style: z.record(z.string(), z.string().or(z.number()).optional()).optional()
+})
 
 interface TransactionItemProps {
   transaction: Transaction
@@ -14,13 +34,16 @@ interface TransactionItemProps {
   style?: React.CSSProperties // For react-window
 }
 
-export const TransactionItem = memo(function TransactionItem({
-  transaction: tx,
-  userAddress,
-  chainId,
-  ethPrice,
-  style
-}: TransactionItemProps) {
+export const TransactionItem = memo(function TransactionItem(props: TransactionItemProps) {
+  // Validate props
+  try {
+    transactionItemSchema.parse(props);
+  } catch (error) {
+    console.error('Invalid props:', error);
+    return null;
+  }
+
+  const { transaction: tx, userAddress, chainId, ethPrice, style } = props;
   const isSent = tx.from.toLowerCase() === userAddress.toLowerCase()
   const value = formatEther(tx.value)
 

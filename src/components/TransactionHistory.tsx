@@ -10,6 +10,19 @@ import { TransactionItem } from './TransactionItem'
 import type { Transaction } from '@/hooks/useTransactions'
 import type { ListChildComponentProps } from 'react-window'
 
+const isValidTransaction = (tx: unknown): tx is Transaction => {
+  return (
+    tx !== null &&
+    typeof tx === 'object' &&
+    'hash' in tx &&
+    'from' in tx &&
+    'to' in tx &&
+    typeof tx.hash === 'string' &&
+    typeof tx.from === 'string' &&
+    typeof tx.to === 'string'
+  )
+}
+
 export function TransactionHistory() {
   const { address } = useWallet()
   const chainId = useChainId()
@@ -18,21 +31,35 @@ export function TransactionHistory() {
 
   // Memoize list height to prevent recalculation on re-renders
   const listHeight = useMemo(() => 
-    Math.min(600, transactions.length * 150),
+    transactions.length ? Math.min(600, transactions.length * 150) : 150,
     [transactions.length]
   )
 
+  // Validate transaction index and data before rendering
+  const validateTransaction = useCallback((index: number): boolean => {
+    return (
+      index >= 0 &&
+      index < transactions.length &&
+      isValidTransaction(transactions[index])
+    )
+  }, [transactions])
+
   // Memoize row renderer to prevent function recreation on re-renders
-  const renderRow = useCallback(({ index, style }: ListChildComponentProps) => (
-    <TransactionItem
-      key={transactions[index].hash}
-      transaction={transactions[index]}
-      userAddress={address || ''}
-      chainId={chainId}
-      ethPrice={ethPrice?.price}
-      style={style}
-    />
-  ), [transactions, address, chainId, ethPrice?.price])
+  const renderRow = useCallback(({ index, style }: ListChildComponentProps) => {
+    if (!validateTransaction(index)) {
+      return null;
+    }
+    return (
+      <TransactionItem
+        key={transactions[index].hash}
+        transaction={transactions[index]}
+        userAddress={address || ''}
+        chainId={chainId}
+        ethPrice={typeof ethPrice?.price === 'number' ? ethPrice.price : undefined}
+        style={style}
+      />
+    );
+  }, [transactions, address, chainId, ethPrice?.price, validateTransaction])
 
   if (!address) {
     return null
@@ -87,7 +114,7 @@ export function TransactionHistory() {
               itemSize={150}
               width="100%"
               className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/10 hover:scrollbar-thumb-primary/20"
-              overscanCount={3} // Preload additional items for smoother scrolling
+              overscanCount={3}
             >
               {renderRow}
             </List>
