@@ -16,6 +16,8 @@ export const WalletBalance = memo(function WalletBalance() {
     isLoading: isBalanceLoading,
     isError: isBalanceError
   } = useBalance(address)
+  // Check for Etherscan API key
+  const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY
   const {
     data: ethPrice,
     isLoading: isPriceLoading,
@@ -62,40 +64,47 @@ export const WalletBalance = memo(function WalletBalance() {
               <RefreshCw className="h-5 w-5 animate-spin" />
               <span>Loading balance...</span>
             </div>
-          ) : isBalanceError ? (
-            <div className="text-destructive flex items-center justify-center gap-2">
-              <XCircle className="h-5 w-5" />
-              <span>Error loading balance</span>
+          ) : null}
+
+          {/* Always show balance, even on error */}
+          <div className="space-y-4">
+            <div className="text-3xl sm:text-4xl font-bold tracking-tight">
+              {balance ? parseFloat(balance.formatted).toFixed(4) : '0.0000'}{' '}
+              <span className="text-xl sm:text-2xl text-muted-foreground">ETH</span>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {balance ? parseFloat(balance.formatted).toFixed(4) : '0.0000'}{' '}
-                <span className="text-xl sm:text-2xl text-muted-foreground">ETH</span>
+            {isBalanceError && (
+              <div className="text-destructive flex flex-col items-center justify-center gap-2">
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-5 w-5" />
+                  <span>Error loading balance</span>
+                </div>
+                {(!etherscanApiKey || etherscanApiKey === '' || etherscanApiKey === '#') && (
+                  <span className="text-xs text-muted-foreground">Etherscan API key is missing. Balance is shown using Wagmi only.</span>
+                )}
               </div>
-              {isPriceLoading ? (
-                <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                  <RefreshCw className="h-3 w-3 animate-spin" />
-                  <span>Updating rate...</span>
+            )}
+            {isPriceLoading ? (
+              <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <RefreshCw className="h-3 w-3 animate-spin" />
+                <span>Updating rate...</span>
+              </div>
+            ) : isPriceError ? (
+              <div className="text-sm text-destructive flex items-center justify-center gap-2">
+                <XCircle className="h-4 w-4" />
+                <span>Error loading ETH rate</span>
+              </div>
+            ) : ethPrice ? (
+              <div className="space-y-2">
+                <div className="text-lg sm:text-xl text-muted-foreground">
+                  ≈ {formatUsdValue(balance?.formatted || '0', ethPrice.price)} USD
                 </div>
-              ) : isPriceError ? (
-                <div className="text-sm text-destructive flex items-center justify-center gap-2">
-                  <XCircle className="h-4 w-4" />
-                  <span>Error loading ETH rate</span>
+                <div className="text-xs sm:text-sm text-muted-foreground/60 flex items-center justify-center gap-1">
+                  <RefreshCw className="h-3 w-3" />
+                  <span>Rate updated {formatDistanceToNow(ethPrice.lastUpdate, { addSuffix: true })}</span>
                 </div>
-              ) : ethPrice ? (
-                <div className="space-y-2">
-                  <div className="text-lg sm:text-xl text-muted-foreground">
-                    ≈ {formatUsdValue(balance?.formatted || '0', ethPrice.price)} USD
-                  </div>
-                  <div className="text-xs sm:text-sm text-muted-foreground/60 flex items-center justify-center gap-1">
-                    <RefreshCw className="h-3 w-3" />
-                    <span>Rate updated {formatDistanceToNow(ethPrice.lastUpdate, { addSuffix: true })}</span>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          )}
+              </div>
+            ) : null}
+          </div>
         </div>
       </CardContent>
     </Card>

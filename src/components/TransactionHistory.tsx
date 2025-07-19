@@ -109,6 +109,10 @@ export function TransactionHistory() {
             {errorMessage && (
               <p className="text-sm text-destructive/80 text-center max-w-md">{errorMessage}</p>
             )}
+            {/* Etherscan API key missing info */}
+            {(!import.meta.env.VITE_ETHERSCAN_API_KEY || import.meta.env.VITE_ETHERSCAN_API_KEY === '' || import.meta.env.VITE_ETHERSCAN_API_KEY === '#') && (
+              <span className="text-xs text-muted-foreground">Etherscan API key is missing. Transaction history may be incomplete or unavailable.</span>
+            )}
             <p className="text-sm text-muted-foreground">Please try again later</p>
           </div>
         ) : !(transactions as readonly ProcessedTransaction[]).length ? (

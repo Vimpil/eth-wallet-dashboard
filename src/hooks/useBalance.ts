@@ -9,6 +9,9 @@ interface Balance {
 }
 
 export function useBalance(address: string | undefined) {
+  // Check for Etherscan API key
+  const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY
+
   // Get ETH price from Etherscan
   const { 
     data: ethPriceData,
@@ -33,6 +36,9 @@ export function useBalance(address: string | undefined) {
       staleTime: 10000
     }
   })
+
+  // If no Etherscan API key, always fallback to Wagmi balance
+  const shouldUseWagmi = !etherscanApiKey || etherscanApiKey === ''
 
   if (!address || !isAddress(address)) {
     return {
@@ -60,6 +66,16 @@ export function useBalance(address: string | undefined) {
     formatted: '0',
     value: 0n,
     usd: null
+  }
+
+  // If fallback is needed, return Wagmi balance only
+  if (shouldUseWagmi) {
+    return {
+      data: balance,
+      isError: isBalanceError,
+      isLoading: isBalanceLoading,
+      refetch
+    }
   }
 
   return {

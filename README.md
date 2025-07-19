@@ -39,6 +39,16 @@ ETH Wallet Dashboard is a modern application for managing your Ethereum wallet, 
 - [Bun](https://bun.sh/) installed globally
 - Node.js (if using npm/yarn for reference)
 
+### Environment Variables
+1. Скопируйте файл `.env.example` в `.env.development` и `.env.production`.
+2. Заполните переменные, особенно:
+   - `VITE_ETHERSCAN_API_KEY` — get your API key at https://etherscan.io/myapikey (registration required).
+   - If you do not provide a key, balance will be shown via Wagmi only, and transaction history may be unavailable.
+   - For production you can set `VITE_ETHERSCAN_API_KEY="#"` to disable Etherscan and use Wagmi only.
+3. See `.env.example` for a sample configuration.
+
+Пример заполнения смотрите в `.env.example`.
+
 ### Installation
 1. **Clone the repository:**
    ```powershell
