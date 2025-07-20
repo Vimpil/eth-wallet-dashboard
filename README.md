@@ -19,7 +19,7 @@ ETH Wallet Dashboard is a modern application for managing your Ethereum wallet, 
 ## Features
 - Connect your Ethereum wallet
 - View wallet balance and ETH price
-- Display transaction history (latest 5 transactions)
+- Display transaction history (latest 5+ transactions)
 - Network status indicator
 - Light/dark theme toggle
 - Error boundaries and robust validation
@@ -81,7 +81,7 @@ Or use Vite directly:
 ```powershell
 bunx vite preview
 ```
-The app will be available at [http://localhost:5173](http://localhost:5173) by default.
+The app will be available at [http://localhost:3000](http://localhost:3000) by default.
 
 ### Build for Production
 ```powershell
