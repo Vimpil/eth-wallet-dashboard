@@ -33,38 +33,13 @@ declare module 'framer-motion' {
     exit?: any;
     transition?: any;
     variants?: any;
-    className?: string;
-    [key: string]: any;
-  }
-
-  export interface AnimatePresenceProps {
-    children?: ReactNode;
-    mode?: "sync" | "wait" | "popLayout";
-    initial?: boolean;
-    onExitComplete?: () => void;
-  }
-  
-  export const AnimatePresence: React.FC<AnimatePresenceProps>;
-  export const motion: {
-    [Key in keyof JSX.IntrinsicElements]: React.ForwardRefExoticComponent<
-      MotionProps & JSX.IntrinsicElements[Key]
-    >;
-  };
-}
-declare module 'framer-motion' {
-  export interface MotionProps {
-    initial?: any;
-    animate?: any;
-    exit?: any;
-    transition?: any;
-    variants?: any;
     style?: React.CSSProperties;
     className?: string;
     [key: string]: any;
   }
 
   export interface AnimatePresenceProps {
-    children?: React.ReactNode;
+    children?: ReactNode;
     mode?: "sync" | "wait" | "popLayout";
     initial?: boolean;
     onExitComplete?: () => void;

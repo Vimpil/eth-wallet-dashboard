@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import {
-  AppError,
+  UnifiedError,
   ValidationError,
   NetworkError,
   WalletError,
@@ -14,7 +14,7 @@ import {
  */
 export function handleError(error: unknown): Error {
   // Already an instance of our custom error classes
-  if (error instanceof AppError) {
+  if (error instanceof UnifiedError) {
     return error
   }
 
@@ -63,7 +63,7 @@ export function handleError(error: unknown): Error {
 /**
  * Type guard to check if an error is a specific type
  */
-export function isErrorType<T extends AppError>(
+export function isErrorType<T extends UnifiedError>(
   error: Error,
   errorType: new (...args: any[]) => T
 ): error is T {

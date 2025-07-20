@@ -2,8 +2,8 @@ import { NETWORK_CONFIG, isSupportedNetwork } from '@/config/networks'
 import type { SupportedChainId } from '@/config/networks'
 import { RateLimiter } from './RateLimiter'
 import type { ApiResponse } from './ApiTypes'
-import { ApiNetworkError, ConfigError, HttpError, ApiRateLimitError } from './ApiTypes'
 import { BlockExplorerService } from './BlockExplorerService'
+import { ApiNetworkError, ApiRateLimitError, ConfigError, HttpError } from '@/lib/errors/AppError';
 
 interface EtherscanServiceConfig {
   rateLimiter: RateLimiter
