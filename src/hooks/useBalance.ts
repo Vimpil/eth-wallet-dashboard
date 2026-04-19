@@ -38,7 +38,7 @@ export function useBalance(address: string | undefined) {
   })
 
   // If no Etherscan API key, always fallback to Wagmi balance
-  const shouldUseWagmi = !etherscanApiKey || etherscanApiKey === ''
+  const shouldUseWagmi = !etherscanApiKey || etherscanApiKey === '' || etherscanApiKey === '#'
 
   if (!address || !isAddress(address)) {
     return {
@@ -52,7 +52,7 @@ export function useBalance(address: string | undefined) {
   if (!wagmiBalance && isBalanceLoading) {
     return {
       data: null,
-      isError: isBalanceError || isEthPriceError,
+      isError: isBalanceError,
       isLoading: isBalanceLoading,
       refetch
     }
@@ -80,7 +80,7 @@ export function useBalance(address: string | undefined) {
 
   return {
     data: balance,
-    isError: isBalanceError || isEthPriceError,
+    isError: isBalanceError,
     isLoading: isBalanceLoading,
     refetch
   }

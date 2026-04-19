@@ -7,7 +7,8 @@ export const NETWORK_CONFIG = {
     name: 'Ethereum Mainnet'
   },
   [sepolia.id]: {
-    apiUrl: 'https://api-sepolia.etherscan.io',
+    // Etherscan V2 uses a unified API host; network is selected via `chainid`
+    apiUrl: 'https://api.etherscan.io',
     explorerUrl: 'https://sepolia.etherscan.io',
     name: 'Sepolia Testnet'
   }

@@ -96,6 +96,9 @@ export function useTransactions(address: string | undefined) {
 
       if (typeof chainId !== 'number') return []
 
+      const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY
+      if (!apiKey || apiKey === '#') return []
+
       try {
         // Validate request parameters
         const params = requestParamsSchema.parse({

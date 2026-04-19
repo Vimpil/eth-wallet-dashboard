@@ -26,7 +26,7 @@ export class ErrorMonitor {
     const report: ErrorReport = {
       error,
       timestamp: Date.now(),
-      userAgent: navigator.userAgent,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
       context
     };
 

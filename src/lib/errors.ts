@@ -65,7 +65,7 @@ export function handleError(error: unknown): Error {
  */
 export function isErrorType<T extends UnifiedError>(
   error: Error,
-  errorType: new (...args: any[]) => T
+  errorType: new (...args: unknown[]) => T
 ): error is T {
   return error instanceof errorType
 }

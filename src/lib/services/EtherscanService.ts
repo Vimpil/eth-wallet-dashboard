@@ -32,16 +32,17 @@ export class EtherscanService {
     const config = NETWORK_CONFIG[chainId as SupportedChainId]
     const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY
 
-    if (!apiKey) {
+    if (!apiKey || apiKey === '#') {
       throw new ConfigError('Etherscan API key is not configured')
     }
 
     const queryParams = new URLSearchParams({
+      chainid: String(chainId),
       ...params,
       apikey: apiKey
     })
 
-    const response = await fetch(`${config.apiUrl}/api?${queryParams}`)
+    const response = await fetch(`${config.apiUrl}/v2/api?${queryParams}`)
 
     if (!response.ok) {
       throw new HttpError(response.status)

@@ -28,6 +28,11 @@ export function useEthPrice() {
   return useQuery<EthPrice | null>({
     queryKey: ['ethPrice'],
     queryFn: async () => {
+      const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY
+      if (!apiKey || apiKey === '#') {
+        return null
+      }
+
       try {
         // Always use mainnet for price data
         const result = await etherscanRequest<EtherscanPriceResult>(

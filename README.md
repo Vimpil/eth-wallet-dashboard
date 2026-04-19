@@ -41,11 +41,18 @@ ETH Wallet Dashboard is a modern application for managing your Ethereum wallet, 
 
 ### Environment Variables
 1. Copy `.env.example` to `.env.development` and `.env.production`.
-2. Fill in the variables, especially:
-   - `VITE_ETHERSCAN_API_KEY` — register and get your API key at https://etherscan.io/myapikey (required for transaction history).
-   - If you do not provide a key, balance will be shown via Wagmi only, and transaction history may be unavailable.
-   - For production you can set `VITE_ETHERSCAN_API_KEY="#"` to disable Etherscan and use Wagmi only.
-3. See `.env.example` for a sample configuration.
+2. Configure:
+   - `VITE_ETHERSCAN_API_KEY` - Etherscan API key from https://etherscan.io/myapikey
+3. Behavior notes:
+   - Transaction history uses Etherscan V2 and needs a valid API key.
+   - If `VITE_ETHERSCAN_API_KEY` is missing or set to `#`, the app disables Etherscan requests and returns an empty transaction list instead of failing the whole app.
+   - Wallet connection and on-chain balance still work via Wagmi/RPC.
+
+### Etherscan V2 Request Model
+- Base API host: `https://api.etherscan.io`
+- Endpoint format: `/v2/api`
+- Network routing is done with `chainid` (for Sepolia: `11155111`)
+- Explorer links still use network-specific domains (for example, `https://sepolia.etherscan.io`)
 
 ### Installation
 1. **Clone the repository:**
@@ -111,18 +118,33 @@ eth-wallet-dashboard/
 ```
 
 ## Environment Variables
-- No sensitive keys required for basic usage. For advanced features, set up `.env` as needed.
+- Core wallet connection and balance work without sensitive keys.
+- `VITE_ETHERSCAN_API_KEY` is required if you want transaction history enabled.
+
+## Etherscan Configuration
+- This project uses Etherscan V2 with a unified API host and `chainid`-based routing.
+- Keep `VITE_ETHERSCAN_API_KEY` set in local and production environments if you want transaction history enabled.
 
 ## Troubleshooting
 - If you encounter issues with Bun, ensure you have the latest version: `bun --version`
-- For network/API errors, check your internet connection and Etherscan API limits.
+- `HTTP error! status: 404` for transaction history usually means an incorrect API host/endpoint combination. This project should call `https://api.etherscan.io/v2/api` with `chainid`.
+- `NOTOK` usually indicates API key, quota/rate-limit, or account-level Etherscan API restrictions.
+- If transaction history is unavailable, verify your key and restart dev server after `.env` changes.
 
 ## Testing
 Unit tests are included for error monitoring and validation logic. To run tests:
 ```powershell
-bun test
+bun run test
 ```
 Test files are located in `src/lib/errors/monitoring.test.ts` and cover error handling and monitoring features.
+
+## Quality Checks
+Run all quality gates before submitting or deploying:
+```powershell
+bun run lint
+bun run test
+bun run build
+```
 
 ## License
 This project is licensed under the MIT License.

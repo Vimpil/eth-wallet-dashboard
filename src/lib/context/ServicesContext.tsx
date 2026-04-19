@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext } from 'react'
 import type { ReactNode } from 'react'
 import { EtherscanService } from '../services/EtherscanService'
 import { RateLimiter } from '../services/RateLimiter'
@@ -43,16 +43,3 @@ export function ServicesProvider({ children }: ServicesProviderProps) {
   )
 }
 
-export function useServices() {
-  const context = useContext(ServicesContext)
-  if (!context) {
-    throw new Error('useServices must be used within ServicesProvider')
-  }
-  return context
-}
-
-// Convenience hooks for specific services
-export function useEtherscan() {
-  const { etherscan } = useServices()
-  return etherscan
-}

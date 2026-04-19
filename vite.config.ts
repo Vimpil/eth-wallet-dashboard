@@ -22,7 +22,7 @@ export default defineConfig({
     cors: true,
     open: true,
     fs: {
-      strict: false,
+      strict: true,
       allow: ['.']
     },
     hmr: {
